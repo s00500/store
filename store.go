@@ -8,10 +8,9 @@ import (
 	"io/ioutil"
 	"os"
 	"path/filepath"
-	"reflect"
 	"runtime"
 
-	"github.com/BurntSushi/toml"
+	"github.com/naoina/toml"
 	"gopkg.in/yaml.v2"
 )
 
@@ -35,15 +34,7 @@ func init() {
 	formats["json"] = format{m: json.Marshal, um: json.Unmarshal}
 	formats["yaml"] = format{m: yaml.Marshal, um: yaml.Unmarshal}
 	formats["yml"] = format{m: yaml.Marshal, um: yaml.Unmarshal}
-
-	formats["toml"] = format{
-		m: func(v interface{}) ([]byte, error) {
-			b := bytes.Buffer{}
-			err := toml.NewEncoder(&b).Encode(v)
-			return b.Bytes(), err
-		},
-		um: toml.Unmarshal,
-	}
+	formats["toml"] = format{m: toml.Marshal, um: toml.Unmarshal}
 }
 
 // Init sets up a unique application name that will be used for name of the
@@ -97,7 +88,6 @@ func Save(path string, v interface{}) error {
 	if applicationName == "" {
 		panic("store: application name not defined")
 	}
-
 	if format, ok := formats[extension(path)]; ok {
 		return SaveWith(path, v, format.m)
 	}
@@ -119,13 +109,10 @@ func LoadWith(path string, v interface{}, um UnmarshalFunc) error {
 		// There is a chance that file we are looking for
 		// just doesn't exist. In this case we are supposed
 		// to create an empty configuration file, based on v.
-		empty := reflect.New(reflect.TypeOf(v))
-		if innerErr := Save(path, &empty); innerErr != nil {
+		if innerErr := Save(path, v); innerErr != nil {
 			// Smth going on with the file system... returning error.
 			return err
 		}
-
-		v = empty
 
 		return nil
 	}
@@ -144,7 +131,6 @@ func SaveWith(path string, v interface{}, m MarshalFunc) error {
 	}
 
 	var b bytes.Buffer
-
 	if data, err := m(v); err == nil {
 		b.Write(data)
 	} else {
