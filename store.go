@@ -96,7 +96,7 @@ func LoadWith(path string, v interface{}, um UnmarshalFunc) error {
 	}
 
 	if err := um(data, v); err != nil {
-		return fmt.Errorf("store: failed to unmarshal %s: %v", path, err)
+		return fmt.Errorf("store: failed to unmarshal %s: %w", path, err)
 	}
 
 	return nil
@@ -109,7 +109,7 @@ func SaveWith(path string, v interface{}, m MarshalFunc) error {
 	if data, err := m(v); err == nil {
 		b.Write(data)
 	} else {
-		return fmt.Errorf("store: failed to marshal %s: %v", path, err)
+		return fmt.Errorf("store: failed to marshal %s: %w", path, err)
 	}
 
 	b.WriteRune('\n')
