@@ -39,19 +39,17 @@ func equal(a, b Settings) bool {
 }
 
 func TestSaveLoad(t *testing.T) {
-	Init("store_test")
-
 	settings := Settings{
 		Age: 42,
 		Cats: []Cat{
-			Cat{"Rudolph", true},
-			Cat{"Patrick", false},
-			Cat{"Jeremy", true},
+			{"Rudolph", true},
+			{"Patrick", false},
+			{"Jeremy", true},
 		},
 		RandomString: "gophers are gonna conquer the world",
 	}
 
-	settingsFile := "path/to/preferences.toml"
+	settingsFile := "preferences.toml"
 
 	err := Save(settingsFile, &settings)
 	if err != nil {
@@ -59,7 +57,7 @@ func TestSaveLoad(t *testing.T) {
 		return
 	}
 
-	defer os.Remove(buildPlatformPath(settingsFile))
+	defer os.Remove(settingsFile)
 
 	var newSettings Settings
 
