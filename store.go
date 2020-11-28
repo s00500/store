@@ -8,6 +8,7 @@ import (
 	"io/ioutil"
 	"os"
 	"path/filepath"
+	"time"
 
 	"github.com/naoina/toml"
 	"gopkg.in/yaml.v2"
@@ -135,24 +136,18 @@ func extension(path string) string {
 	return ""
 }
 
-/*
-// buildPlatformPath builds a platform-dependent path for relative path given.
-func buildPlatformPath(path string) string {
-	if runtime.GOOS == "windows" {
-		return fmt.Sprintf("%s\\%s\\%s", os.Getenv("APPDATA"),
-			applicationName,
-			path)
-	}
+type Duration time.Duration
 
-	var unixConfigDir string
-	if xdg := os.Getenv("XDG_CONFIG_HOME"); xdg != "" {
-		unixConfigDir = xdg
-	} else {
-		unixConfigDir = os.Getenv("HOME") + "/.config"
+// UnmarshalText implements encoding.TextUnmarshaler
+func (d *Duration) UnmarshalText(data []byte) error {
+	duration, err := time.ParseDuration(string(data))
+	if err == nil {
+		*d = Duration(duration)
 	}
-
-	return fmt.Sprintf("%s/%s/%s", unixConfigDir,
-		applicationName,
-		path)
+	return err
 }
-*/
+
+// MarshalText implements encoding.TextMarshaler
+func (d Duration) MarshalText() ([]byte, error) {
+	return []byte(time.Duration(d).String()), nil
+}

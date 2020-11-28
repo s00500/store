@@ -18,6 +18,7 @@ type Settings struct {
 	Age          int
 	Cats         []Cat
 	RandomString string
+	Dur          Duration
 }
 
 func equal(a, b Settings) bool {
@@ -42,6 +43,30 @@ func equal(a, b Settings) bool {
 	return true
 }
 
+/*
+func TestDefaultValues(t *testing.T) {
+	settings := Settings{
+		Age: 42,
+		Cats: []Cat{
+			{"Rudolph", true},
+			{"Patrick", false},
+			{"Jeremy", true},
+		},
+		Dur:          Duration(time.Second),
+		RandomString: "gophers are gonna conquer the world",
+	}
+
+	settingsFile := "default.toml"
+
+	err := Load(settingsFile, &settings)
+	if err != nil {
+		t.Fatalf("failed to load preferences: %s\n", err)
+		return
+	}
+
+	//	defer os.Remove(settingsFile)
+}
+*/
 func TestSaveLoad(t *testing.T) {
 	settings := Settings{
 		Age: 42,

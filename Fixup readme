@@ -1,0 +1,6 @@
+Fixup readme
+fix example
+fix godoc
+
+
+think about multitreading / possible ways of statefully handling the config struct ?
